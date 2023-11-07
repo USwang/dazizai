@@ -33,3 +33,12 @@ def getjson_stockdata(codenumber):
     data = response.text
     data = data[41:-2]  #将返回字符串转换为json格式
     return data
+
+
+# if __name__ == '__main__':
+#     # totolPage = pageNumber()
+#     # for page in range(totolPage):
+#     #     list_pages = getjson_stocklist(page+1)
+#     #     for lists_page in list_pages:
+#     #         SECURITY_CODE = lists_page['SECURITY_CODE']
+#     #         SECURITY_NAME_ABBR = lists_page['SECURITY_NAME_ABBR']

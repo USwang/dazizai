@@ -1,10 +1,11 @@
 from flask import Flask,render_template, request, url_for
 import config
 from exts import db
-from models import Stockdata, Stocklist
+from models import Stockdata, Stocklist,Stockincome
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
+from eastmoneyincomedataget import getjson_stockincome
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -77,6 +78,36 @@ def update_stocklist():
     return 'update finished'
 
 
+@app.route('/update/stockincome/',methods=['GET', 'POST'])
+def update_stockincome():
+    if request.method == 'GET':
+        return render_template('stockincome.html')
+    else:
+        # 验证密码
+        username = request.form.get('username')
+        password = request.form.get('password')
+        # 更新数据库
+        if username == 'wsy' and password == 'mtjb1..':
+            lies = db.session.query(Stocklist).all() #获取stock列表
+            for li in lies:
+                SECURITY_CODE = li.SECURITY_CODE
+                SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
+                #判断是否存在
+                da = db.session.query(Stockincome).filter_by(SECURITY_CODE=SECURITY_CODE).first()
+                income = getjson_stockincome(SECURITY_CODE)
+                if da:
+                    da.datajson = income
+                    db.session.commit()
+                else:
+                    stockincome = Stockincome(SECURITY_CODE=SECURITY_CODE, SECURITY_NAME_ABBR=SECURITY_NAME_ABBR,
+                                          INCOME_datajson=income)
+                    db.session.add(stockincome)
+                    db.session.commit()
+
+        else:
+            return '用户名或密码不正确'
+
+    return 'update finished'
 # @app.route('/search')
 # def search():
 #     username = request.args.get('username')  # 从请求参数中获取要搜索的用户名
