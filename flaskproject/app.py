@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, url_for
 import config
 from exts import db
-from models import Stockdatabase
+from models import Stockdatabase, UserModel
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
@@ -13,8 +13,9 @@ migrate = Migrate(app, db)
 
 
 @app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello Wo'
+def index():
+    stockdatas = Stockdatabase.query.all()  # 查询所有数据
+    return render_template('index.html', stockdatas=stockdatas)
 
 
 @app.route('/update/stockprice/',methods=['GET','POST'])

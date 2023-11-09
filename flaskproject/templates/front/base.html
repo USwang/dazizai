@@ -1,0 +1,101 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{url_for('static',filename='front/js/zyajax.js')}}"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='front/css/front_base.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录-自游数据</title>
+{#    <link rel="stylesheet" href="{{url_for('static',filename='front/css/signbase.css')}}">#}
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">待输入。。。。。</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">首页<span class="sr-only">(current)</span></a></li>
+                </ul>
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="请输入关键字">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            周杰伦
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="#">后台管理</a></li>
+                            <li><a href="#">设置</a></li>
+                            <li><a href="#">注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div class="main-container">
+        <div class="outer-box">
+            <div class="logo-box">
+                <a href="/">
+                    <img src="../images/logo.png" alt="">
+                </a>
+            </div>
+            <h2 class="page-title">
+                知了传课-登录
+            </h2>
+            <div class="sign-box">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="email" class="form-control" name="email" placeholder="邮箱">
+                        <span class="input-group-btn">
+                            <button id="sms-captcha-btn" class="btn btn-default">发送验证码</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="email_captcha" placeholder="邮箱验证码">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" placeholder="用户名">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password1" placeholder="密码">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password2" placeholder="确认密码">
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="graph_captcha" placeholder="图形验证码">
+                        <span class="input-group-addon captcha-addon">
+                            <img id="captcha-img" class="captcha-img" src="{{ url_for('common.graph_captcha') }}" alt="">
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-warning btn-block" id="submit-btn">立即注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
