@@ -24,6 +24,7 @@ def getjson_stockincome(codenumber):
         now = datetime.now()
         current_year = now.year  # 获取当前年份
         imcomelist = []
+        data = {}
         # #从1990年开始，不足的数据将为空，需要跳过。
         for year in range(1990, current_year+1, 1):
                 for m in range(4):

@@ -1,5 +1,22 @@
 from exts import db
 
+class Stockdatabase(db.Model):
+    __tablename__ = 'stock_database'
+    # stock 代码
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # stock code number
+    SECURITY_CODE = db.Column(db.String(50), unique=True, nullable=True)
+    # stock 名称
+    SECURITY_NAME_ABBR = db.Column(db.String(50), nullable=True)
+    # 市场标签 沪，深，创，科创
+    # markettag = db.Column(db.String(50), nullable=True)
+    # 数据
+    PRICE_datajson = db.Column(db.JSON)
+    INCOME_datajson = db.Column(db.JSON)
+
+    def __repr__(self):
+        return f'<Stockdatabase {self.SECURITY_CODE}>'
+
 
 class Stockdata(db.Model):
     __tablename__ = 'stock_data'
@@ -12,7 +29,8 @@ class Stockdata(db.Model):
     # 市场标签 沪，深，创，科创
     # markettag = db.Column(db.String(50), nullable=True)
     # 数据
-    datajson = db.Column(db.JSON, nullable=True)
+
+    INCOME_datajson = db.Column(db.JSON, nullable=True)
 
 
 class Stocklist(db.Model):

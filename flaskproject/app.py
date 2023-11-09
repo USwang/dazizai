@@ -1,12 +1,11 @@
-from flask import Flask,render_template, request, url_for
+from flask import Flask, render_template, request, url_for
 import config
 from exts import db
-from models import Stockdata, Stocklist,Stockincome
+from models import Stockdatabase
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
 from eastmoneyincomedataget import getjson_stockincome
-
 app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
@@ -18,8 +17,8 @@ def hello_world():  # put application's code here
     return 'Hello Wo'
 
 
-@app.route('/update/stockdata/',methods=['GET','POST'])
-def update_stockdata():
+@app.route('/update/stockprice/',methods=['GET','POST'])
+def update_stockprice():
     if request.method == 'GET':
         return render_template('stockdata.html')
     else:
@@ -28,19 +27,21 @@ def update_stockdata():
         password = request.form.get('password')
         # 更新数据库
         if username == 'wsy'and password == 'mtjb1..':
-            lies = db.session.query(Stocklist).all()
-            for li in lies:
-                SECURITY_CODE = li.SECURITY_CODE
-                SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
-                da = db.session.query(Stockdata).filter_by(SECURITY_CODE=SECURITY_CODE).first()
-                datajson = getjson_stockdata(SECURITY_CODE)
-                if da:
-                    da.datajson=datajson
-                    db.session.commit()
-                else:
-                    stockdata = Stockdata(SECURITY_CODE=SECURITY_CODE, SECURITY_NAME_ABBR=SECURITY_NAME_ABBR, datajson=datajson)
-                    db.session.add(stockdata)
-                    db.session.commit()
+            lies = db.session.query(Stockdatabase).all()
+            if bool(lies):
+                for li in lies:
+                    SECURITY_CODE = li.SECURITY_CODE
+                    da = db.session.query(Stockdatabase).filter_by(SECURITY_CODE=SECURITY_CODE).first()
+                    pricedatajson = getjson_stockdata(SECURITY_CODE)
+                    if da:
+                        da.PRICE_datajson = pricedatajson
+                        db.session.commit()
+                    else:
+                        stockdatabase = Stockdatabase(PRICE_datajson=pricedatajson)
+                        db.session.add(stockdatabase)
+                        db.session.commit()
+            else:
+                return "请先更新列表"
         else:
             return '用户名或密码不正确'
     return 'update finished'
@@ -62,17 +63,17 @@ def update_stocklist():
                 for lists_page in list_pages:
                     SECURITY_CODE = lists_page['SECURITY_CODE']
                     SECURITY_NAME_ABBR = lists_page['SECURITY_NAME_ABBR']
-                # 判断是否已经在数据库，
-                li = db.session.query(Stocklist).filter_by(SECURITY_CODE=SECURITY_CODE).first()
-                # print(bool(li))
-                if li:
-                    li.SECURITY_CODE = SECURITY_CODE
-                    li.SECURITY_NAME_ABBR = SECURITY_NAME_ABBR
-                    db.session.commit()
-                else:
-                    stocklist = Stocklist(SECURITY_CODE=SECURITY_CODE, SECURITY_NAME_ABBR=SECURITY_NAME_ABBR)
-                    db.session.add(stocklist)
-                    db.session.commit()
+                    # 判断是否已经在数据库，
+                    li = db.session.query(Stockdatabase).filter_by(SECURITY_CODE=SECURITY_CODE).first()
+                    if bool(li):
+                        li.SECURITY_CODE = SECURITY_CODE
+                        li.SECURITY_NAME_ABBR = SECURITY_NAME_ABBR
+                        db.session.commit()
+                    else:
+                        stockdatabase = Stockdatabase(SECURITY_CODE=SECURITY_CODE, SECURITY_NAME_ABBR=SECURITY_NAME_ABBR)
+
+                        db.session.add(stockdatabase)
+                        db.session.commit()
         else:
             return '用户名或密码不正确'
     return 'update finished'
@@ -88,22 +89,23 @@ def update_stockincome():
         password = request.form.get('password')
         # 更新数据库
         if username == 'wsy' and password == 'mtjb1..':
-            lies = db.session.query(Stocklist).all() #获取stock列表
-            for li in lies:
-                SECURITY_CODE = li.SECURITY_CODE
-                SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
-                #判断是否存在
-                da = db.session.query(Stockincome).filter_by(SECURITY_CODE=SECURITY_CODE).first()
-                income = getjson_stockincome(SECURITY_CODE)
-                if da:
-                    da.datajson = income
-                    db.session.commit()
-                else:
-                    stockincome = Stockincome(SECURITY_CODE=SECURITY_CODE, SECURITY_NAME_ABBR=SECURITY_NAME_ABBR,
-                                          INCOME_datajson=income)
-                    db.session.add(stockincome)
-                    db.session.commit()
-
+            lies = db.session.query(Stockdatabase).all() #获取stock列表
+            if lies:
+                for li in lies:
+                    SECURITY_CODE = li.SECURITY_CODE
+                    SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
+                    #判断是否存在
+                    da = db.session.query(Stockdatabase).filter_by(SECURITY_CODE=SECURITY_CODE).first()
+                    income = getjson_stockincome(SECURITY_CODE)
+                    if da:
+                        da.INCOME_datajson = income
+                        db.session.commit()
+                    else:
+                        stockdatabase = Stockdatabase(INCOME_datajson=income)
+                        db.session.add(stockdatabase)
+                        db.session.commit()
+            else:
+                return "请先更新列表"
         else:
             return '用户名或密码不正确'
 
@@ -117,5 +119,7 @@ def update_stockincome():
 #         return render_template('search.html', users=users)  # 渲染搜索结果页面，并传递用户数据
 #     else:
 #         return "没有找到相关用户"  # 如果未找到用户，返回相应的提示信息
+
+
 if __name__ == '__main__':
     app.run()
