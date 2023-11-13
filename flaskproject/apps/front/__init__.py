@@ -1,0 +1,1 @@
+from apps.front.views import bp as front_bp

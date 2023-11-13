@@ -6,18 +6,14 @@ from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
 from eastmoneyincomedataget import getjson_stockincome
+from apps.front import front_bp
 app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-
-@app.route('/')
-def index():
-    stockdatas = Stockdatabase.query.all()  # 查询所有数据
-    return render_template('index.html', stockdatas=stockdatas)
-
-
+#注册蓝图
+app.register_blueprint(front_bp)
 @app.route('/update/stockprice/',methods=['GET','POST'])
 def update_stockprice():
     if request.method == 'GET':
