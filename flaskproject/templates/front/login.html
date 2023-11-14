@@ -7,7 +7,7 @@
 
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static',filename='apps/css/signbase.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='front/css/signbase.css') }}">
 {% endblock %}
 
 
@@ -15,7 +15,7 @@
         <div class="outer-box">
             <div class="logo-box">
                 <a href="/">
-                    <img src="../images/logo.png" alt="">
+                    <img src="{{url_for('static',filename='front/images/logo.png')}}" alt="">
                 </a>
             </div>
             <h2 class="page-title">

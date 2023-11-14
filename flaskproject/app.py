@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for
 import config
-from exts import db
+from exts import db,mail
 from models import Stockdatabase, UserModel
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
@@ -10,6 +10,7 @@ from apps.front import front_bp
 app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
+mail.init_app(app)
 migrate = Migrate(app, db)
 
 #注册蓝图
