@@ -7,11 +7,13 @@ from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
 from eastmoneyincomedataget import getjson_stockincome
 from apps.front import front_bp
+from bbs_celery import make_celery
 app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
 mail.init_app(app)
 migrate = Migrate(app, db)
+mycelery = make_celery(app)
 
 #注册蓝图
 app.register_blueprint(front_bp)
