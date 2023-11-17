@@ -1,8 +1,12 @@
-from flask import Blueprint, request, render_template, jsonify, current_app
+from flask import Blueprint, request, render_template, jsonify, current_app, make_response
 import string
 import random
 from flask_mail import Message
-from exts import mail
+from exts import mail,cache
+from utils.captcha import Captcha
+import time
+from hashlib import md5
+from io import BytesIO
 
 bp = Blueprint("apps", __name__, url_prefix='/')
 
@@ -43,7 +47,25 @@ def email_captcha():
     recipients = [email]
     body = "【自游数据】您的注册码为：%s" % captcha
     current_app.celery.send_task("send_mail", (email, subject, body))
+    cache.set(email, captcha)
+    # print(cache.get(email))
     return jsonify({"code":200,"message":"邮件发送成功！"})
+
+
+@bp.route('/graph/captcha/')
+def graph_captcha():
+    captcha, image = Captcha.gene_graph_captcha()
+    #key, value
+    key = md5((captcha+str(time.time())).encode('utf-8')).hexdigest()
+    cache.set(key,captcha)
+    out = BytesIO()
+    image.save(out,'png')
+    out.seek(0)
+    resp = make_response(out.read())
+    resp.content_type = 'image/png'
+    resp.set_cookie("_graph_captcha_key",key,max_age = 3600)
+    return resp
+
 
 @bp.route('/login/',methods=['GET', 'POST'])
 def login():
@@ -55,3 +77,5 @@ def login():
 def register():
     if request.method == 'GET':
         return render_template("front/register.html")
+    else:
+        pass

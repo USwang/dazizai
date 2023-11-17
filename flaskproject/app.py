@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for
 import config
-from exts import db,mail
+from exts import db, mail, cache, csrf
 from models import Stockdatabase, UserModel
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
@@ -12,6 +12,8 @@ app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
 mail.init_app(app)
+cache.init_app(app)
+csrf.init_app(app)
 migrate = Migrate(app, db)
 mycelery = make_celery(app)
 

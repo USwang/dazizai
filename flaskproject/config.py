@@ -1,3 +1,11 @@
+import os
+
+SECRET_KEY = 'dazizai'
+
+#项目根路径
+BASE_DIR = os.path.dirname(__file__)
+
+
 HOSTNAME = '127.0.0.1'
 PORT = '3306'
 DATABASE = 'stockdata'
@@ -13,9 +21,15 @@ MAIL_SERVER = "smtp.163.com"
 MAIL_USE_SSL = True
 MAIL_PORT = 465
 MAIL_USERNAME = "wangshiyu217@163.com"
-MAIL_PASSWORD = "WSYLANTMMHYHCGAWNSE" #not true
+MAIL_PASSWORD = "LANTMMHYHCGAWNSE" #not true
 MAIL_DEFAULT_SENDER = "wangshiyu217@163.com"
 
 #celery的redis配置
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+
+#flash-caching 的配置
+CACHE_TYPE = "RedisCache"
+CACHE_DEFAULT_TIMEOUT = 300
+CACHE_REDIS_HOST = "127.0.0.1"
+CACHE_REDIS_PORT = 6379
