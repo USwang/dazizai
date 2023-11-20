@@ -21,7 +21,7 @@ MAIL_SERVER = "smtp.163.com"
 MAIL_USE_SSL = True
 MAIL_PORT = 465
 MAIL_USERNAME = "wangshiyu217@163.com"
-MAIL_PASSWORD = "LANTMMHYHCGAWNSE" #not true
+MAIL_PASSWORD = "WSYLANTMMHYHCGAWNSE" #not true
 MAIL_DEFAULT_SENDER = "wangshiyu217@163.com"
 
 #celery的redis配置
