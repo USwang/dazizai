@@ -1,6 +1,10 @@
 import os
+from datetime import timedelta
 
 SECRET_KEY = 'dazizai'
+
+#session.permanent = True 的情况下过期时间
+PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
 #项目根路径
 BASE_DIR = os.path.dirname(__file__)

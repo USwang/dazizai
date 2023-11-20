@@ -56,9 +56,42 @@ RegisterHandler.prototype.listenGraphCaptchaEvent=function (){
     });
 }
 
+RegisterHandler.prototype.listenSubmitEvent = function (){
+    $('#submit-btn').on("click",function (event){
+        event.preventDefault();
+        var email = $("input[name='email']").val();
+        var email_captcha = $("input[name='email-captcha']").val();
+        var username = $("input[name='username']").val();
+        var password = $("input[name='password']").val();
+        var repeat_password = $("input[name='repeat-password']").val();
+        var graph_captcha = $("input[name='graph-captcha']").val();
+
+        //暂未验证上述数据是否正确
+        zyajax.post({
+            url: "/register/",
+            data: {
+                "email":email,
+                "email_captcha":email_captcha,
+                "username": username,
+                "password":password,
+                "repeat_password":repeat_password,
+                "graph_captcha":graph_captcha
+            },
+            success:function (result) {
+                if(result['code']===200){
+                    window.location = '/login/';
+                }else{
+                    alert(result['message']);
+                }
+            }
+        })
+    })
+}
+
 RegisterHandler.prototype.run = function (){
     this.listenSendCaptchaEvent();
     this.listenGraphCaptchaEvent();
+    this.listenSubmitEvent();
 }
 
 $(function (){
