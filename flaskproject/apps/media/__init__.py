@@ -1,0 +1,1 @@
+from apps.media.views import bp as media_bp

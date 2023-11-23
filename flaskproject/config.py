@@ -25,7 +25,7 @@ MAIL_SERVER = "smtp.163.com"
 MAIL_USE_SSL = True
 MAIL_PORT = 465
 MAIL_USERNAME = "wangshiyu217@163.com"
-MAIL_PASSWORD = "WSYLANTMMHYHCGAWNSE" #not true
+MAIL_PASSWORD = "LANTMMHYHCGAWNSE" #not true
 MAIL_DEFAULT_SENDER = "wangshiyu217@163.com"
 
 #celery的redis配置
@@ -37,3 +37,6 @@ CACHE_TYPE = "RedisCache"
 CACHE_DEFAULT_TIMEOUT = 300
 CACHE_REDIS_HOST = "127.0.0.1"
 CACHE_REDIS_PORT = 6379
+
+#头像配置
+AVATARS_SAVE_PATH = os.path.join(BASE_DIR,"media","avatars")
