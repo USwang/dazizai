@@ -6,11 +6,79 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static',filename='front/css/index.css') }}">
+{#<script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>#}
+<script src="{{ url_for('static',filename='lib/wangEditor/wangEditor.min.js') }}"></script>
+<script src="{{ url_for('static',filename='front/js/public_post.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='lib/wangEditor/wangEditor.css') }}">
+{#<link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">#}
+<style>
+  #editor—wrapper {
+    border: 1px solid #ccc;
+    z-index: 60; /* 按需定义 */
+  }
+  #toolbar-container { border-bottom: 1px solid #ccc; }
+  #editor-container { height: 500px; }
+</style>
 {% endblock %}
 
 {% block body %}
-<h1>Stock database</h1>
-    <ul>
-        hello world
-    </ul>
+<h1 style="text-align:center;padding: 20px;">发布帖子</h1>
+    <form action="" method="post">
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">标题</span>
+          <input type="text" class="form-control" name="title">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">板块</span>
+          <select name="board_id" class="form-control">
+            <option value="1">Python</option>
+            <option value="1">Flask</option>
+            <option value="1">Django</option>
+            <option value="1">爬虫</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div id="editor—wrapper">
+        <div id="toolbar-container"></div>
+        <div id="editor-container"></div>
+{##}
+{#        <script>#}
+{#            var E = window.wangEditor;#}
+{#            const { createEditor, createToolbar } = window.wangEditor#}
+{##}
+{#            const editorConfig = {#}
+{#                placeholder: 'Type here...',#}
+{#                onChange(editor) {#}
+{#                  const html = editor.getHtml()#}
+{#                  console.log('editor content', html)#}
+{#                  // 也可以同步到 <textarea>#}
+{#                }#}
+{#            }#}
+{##}
+{#            const editor = createEditor({#}
+{#                selector: '#editor-container',#}
+{#                html: '<p><br></p>',#}
+{#                config: editorConfig,#}
+{#                mode: 'default', // or 'simple'#}
+{#            })#}
+{##}
+{#            const toolbarConfig = {}#}
+{##}
+{#            const toolbar = createToolbar({#}
+{#                editor,#}
+{#                selector: '#toolbar-container',#}
+{#                config: toolbarConfig,#}
+{#                mode: 'default', // or 'simple'#}
+{#            })#}
+{#        </script>#}
+      </div>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-danger" id="submit-btn">发布帖子</button>
+      </div>
+    </form>
 {% endblock body %}

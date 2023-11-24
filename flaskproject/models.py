@@ -2,6 +2,8 @@ from exts import db
 import shortuuid
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+
+
 class UserModel(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.String(100),primary_key=True, default=shortuuid.uuid)
@@ -31,6 +33,39 @@ class UserModel(db.Model):
 
     def check_password(self, rawpwd):
         return check_password_hash(self.password,rawpwd)
+
+
+#隐私设置
+# class BoardModel(db.Model):
+#     __tablename__ = "board"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String(20), default="公开/public")
+#     password = db.Column(db.String(20), default="公开/public")
+#     create_time = db.Column(db.DateTime, default=datetime)
+
+
+class PostModel(db.Model):
+    __tablename__ = 'post'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime,default=datetime)
+    author_id = db.Column(db.String(100),db.ForeignKey("user.id"))
+
+    author = db.relationship("UserModel",backref=db.backref("posts"))
+
+
+class CommentModel(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime,default=datetime)
+    post_id = db.Column(db.Integer,db.ForeignKey("post.id"))
+    author_id = db.Column(db.String(100),db.ForeignKey("user.id"),nullable=False)
+
+    post = db.relationship("PostModel",backref=db.backref('comments',
+                           order_by="CommentModel.create_time.desc()",cascade="delete,delete-orphan"))
+    author = db.relationship("UserModel",backref=db.backref("comments"))
 
 
 class Stockdatabase(db.Model):
