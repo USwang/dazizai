@@ -1,7 +1,7 @@
 from wtforms import Form,ValidationError
 from wtforms.fields import StringField,IntegerField, FileField
 from flask_wtf.file import FileAllowed, FileSize
-from wtforms.validators import Email, length, EqualTo
+from wtforms.validators import Email, length, EqualTo, Length, InputRequired
 
 from exts import cache
 from models import UserModel
@@ -18,11 +18,11 @@ class BaseForm(Form):
 
 class RegisterForm(BaseForm):
     email = StringField(validators=[Email(message="请输入正确的邮箱！")])
-    email_captcha = StringField(validators=[length(4,4,message="请输入正确的验证码！")])
-    username = StringField(validators=[length(3,30,message="请输入正确长度的用户名！")])
-    password = StringField(validators=[length(6,20,message="请输入正确长度的密码！")])
+    email_captcha = StringField(validators=[Length(4,4,message="请输入正确的验证码！")])
+    username = StringField(validators=[Length(3,30,message="请输入正确长度的用户名！")])
+    password = StringField(validators=[Length(6,20,message="请输入正确长度的密码！")])
     repeat_password = StringField(validators=[EqualTo("password",message="两次密码不一致！")])
-    graph_captcha = StringField(validators=[length(4,4,message="请输入正确长度的图形验证码！")])
+    graph_captcha = StringField(validators=[Length(4,4,message="请输入正确长度的图形验证码！")])
 
     def validate_email(self,field):
         email = field.data
@@ -47,7 +47,7 @@ class RegisterForm(BaseForm):
 
 class LoginForm(BaseForm):
     email = StringField(validators=[Email(message="请输入正确的邮箱！")])
-    password = StringField(validators=[length(6,20,message="请输入正确长度的密码！")])
+    password = StringField(validators=[Length(6,20,message="请输入正确长度的密码！")])
     remember = IntegerField()
 
 
@@ -56,5 +56,15 @@ class UploadAvatarForm(BaseForm):
                                   FileSize(max_size=1024*1024*5,message='图片最大不超过5M')])
 
 
+class UploadImageForm(BaseForm):
+    image = FileField(validators=[FileAllowed(['jpg','jpeg','png'],message='请上传.jpg .jpeg .png等格式图片'),
+                                  FileSize(max_size=1024*1024*2,message='图片最大不超过2M')])
+
+
 class SetSignatureForm(BaseForm):
-    signature = StringField(validators=[length(0,20,message="个性签名不大于20字！")])
+    signature = StringField(validators=[Length(0,20,message="个性签名不大于20字！")])
+
+class PublicPostForm(BaseForm):
+    title = StringField(validators=[Length(min=1,max=200,message="帖子标题必须在1-200之间！")])
+    content = StringField(validators=[InputRequired(message='请传入内容！')])
+    board_id = IntegerField(validators=[InputRequired(message='请传入板块ID!')])

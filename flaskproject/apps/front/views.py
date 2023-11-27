@@ -8,7 +8,7 @@ from flask import (Blueprint,
                    make_response,
                    session,
                    redirect,
-                    g)
+                   g, url_for)
 import string
 import random
 from flask_mail import Message
@@ -18,7 +18,7 @@ from utils.captcha import Captcha
 import time
 from hashlib import md5
 from io import BytesIO
-from .forms import RegisterForm, LoginForm,UploadAvatarForm,SetSignatureForm
+from .forms import RegisterForm, LoginForm,UploadAvatarForm,SetSignatureForm,UploadImageForm,PublicPostForm
 from models import UserModel, Stockdatabase, PostModel
 from exts import db
 from .decorators import login_required
@@ -48,9 +48,13 @@ def index():
 
 
 @bp.route('/post/public/',methods=['GET','POST'])
+@login_required
 def public_post():
-    if request.method=="GET":
+    if request.method=="GET":   #如果GET访问就返回主页
         posts = PostModel.query.all()
+        return render_template("front/index.html",posts=posts)
+    else:
+        form = PublicPostForm(request.form)
 
 
 @bp.get("/email/captcha")  #直接get模式
@@ -173,3 +177,28 @@ def set_signature():
         return restful.ok()
     else:
         return restful.params_error(message=form.messages[0])
+
+
+@bp.post("/post/image/upload")
+@login_required
+def upload_post_image():
+    form = UploadImageForm(request.files)
+    if form.validate():
+        image = form.image.data
+        filename = image.filename
+        _, ext = os.path.splitext(filename)
+        filename = md5((g.user.email+str(time.time())).encode("utf-8")).hexdigest() + ext
+        image_path = os.path.join(current_app.config['POST_IMAGE_SAVE_PATH'], filename)
+        image.save(image_path)
+        return jsonify({"errno": 0,
+                        "data": {
+                        "url": url_for("media.get_post_image",filename=filename),
+                        "alt": filename,
+                        "href": ""
+                        }})
+    else:
+        message = form.messages[0]
+        return jsonify({
+                    "errno": 1,
+                    "message": message
+                })
