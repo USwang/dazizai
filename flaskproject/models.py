@@ -36,12 +36,12 @@ class UserModel(db.Model):
 
 
 #隐私设置
-# class BoardModel(db.Model):
-#     __tablename__ = "board"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     name = db.Column(db.String(20), default="公开/public")
-#     password = db.Column(db.String(20), default="公开/public")
-#     create_time = db.Column(db.DateTime, default=datetime)
+class BoardModel(db.Model):
+    __tablename__ = "board"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(20), default="公开/public")
+    priority = db.Column(db.Integer, default=1)
+    create_time = db.Column(db.DateTime, default=datetime.now)
 
 
 class PostModel(db.Model):
@@ -49,17 +49,19 @@ class PostModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    create_time = db.Column(db.DateTime,default=datetime)
+    create_time = db.Column(db.DateTime,default=datetime.now)
     author_id = db.Column(db.String(100),db.ForeignKey("user.id"))
+    board_id = db.Column(db.Integer,db.ForeignKey("board.id"))
 
     author = db.relationship("UserModel",backref=db.backref("posts"))
+    board = db.relationship("BoardModel",backref=db.backref("posts"))
 
 
 class CommentModel(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    create_time = db.Column(db.DateTime,default=datetime)
+    create_time = db.Column(db.DateTime,default=datetime.now)
     post_id = db.Column(db.Integer,db.ForeignKey("post.id"))
     author_id = db.Column(db.String(100),db.ForeignKey("user.id"),nullable=False)
 

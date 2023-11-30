@@ -15,13 +15,6 @@ PublicPostHandler.prototype.initEditor = function () {
           // 也可以同步到 <textarea>
         },
         MENU_CONF:{},
-        // uploadImage: {
-        // server: '/post/image/upload', // 你的图片上传服务器地址
-        // fieldName: 'image', // 你的上传字段名
-        // headers: {
-        //     "X-CSRFToken": $("meta[name='csrf-token']").attr("content"), // 使用 CSRF token
-        //     }
-        // }
     };
     editorConfig.MENU_CONF['uploadImage'] = {
      server: '/post/image/upload',
@@ -45,12 +38,39 @@ PublicPostHandler.prototype.initEditor = function () {
         config: toolbarConfig,
         mode: 'default', // or 'simple'
     });
-
+    this.editor =editor;
 }
 
 
+PublicPostHandler.prototype.listenSubmitEvent = function () {
+    var that = this;
+    $("#submit-btn").on("click",function (event) {
+        event.preventDefault();
+        var title = $("input[name='title']").val();
+        var board_id = $("select[name='board_id']").val();
+        var content = that.editor.getHtml() ;
+        zyajax.post({
+            url:"/post/public",
+            data:{title,board_id,content},
+            success:function (result) {
+                if(result['code']===200){
+                    let data = result['data'];
+                    let post_id = data['id'];
+                    window.location = "/post/detail/" + post_id;
+                }else {
+                    alert(result['message'])
+                }
+
+            }
+        });
+
+    });
+
+}
+
 PublicPostHandler.prototype.run = function () {
     this.initEditor();
+    this.listenSubmitEvent();
 
 }
 

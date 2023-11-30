@@ -64,7 +64,13 @@ class UploadImageForm(BaseForm):
 class SetSignatureForm(BaseForm):
     signature = StringField(validators=[Length(0,20,message="个性签名不大于20字！")])
 
+
 class PublicPostForm(BaseForm):
-    title = StringField(validators=[Length(min=1,max=200,message="帖子标题必须在1-200之间！")])
+    title = StringField(validators=[Length(min=1, max=200, message="帖子标题必须在1-200之间！")])
     content = StringField(validators=[InputRequired(message='请传入内容！')])
     board_id = IntegerField(validators=[InputRequired(message='请传入板块ID!')])
+
+
+class PublicCommentForm(BaseForm):
+    content = StringField(validators=[InputRequired(message='请传入内容！')])
+    post_id = IntegerField(validators=[InputRequired(message="请传入帖子ID")])

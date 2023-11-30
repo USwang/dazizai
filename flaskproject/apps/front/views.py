@@ -18,8 +18,9 @@ from utils.captcha import Captcha
 import time
 from hashlib import md5
 from io import BytesIO
-from .forms import RegisterForm, LoginForm,UploadAvatarForm,SetSignatureForm,UploadImageForm,PublicPostForm
-from models import UserModel, Stockdatabase, PostModel
+from .forms import RegisterForm, LoginForm, UploadAvatarForm, SetSignatureForm, UploadImageForm, PublicPostForm, \
+    PublicCommentForm
+from models import UserModel, Stockdatabase, PostModel, BoardModel, CommentModel
 from exts import db
 from .decorators import login_required
 from flask_avatars import Identicon
@@ -43,7 +44,7 @@ def front_context_processor():
 
 @bp.route('/')
 def index():
-    posts = PostModel.query.all()
+    posts = PostModel.query.order_by(PostModel.create_time.desc()).all()
     return render_template('front/index.html',posts = posts)
 
 
@@ -55,6 +56,20 @@ def public_post():
         return render_template("front/index.html",posts=posts)
     else:
         form = PublicPostForm(request.form)
+        if form.validate():
+            title = form.title.data
+            content = form.content.data
+            board_id = form.board_id.data
+            try:
+                board = BoardModel.query.get(board_id)
+            except Exception as e:
+                return restful.params_error(message="板块不存在!")
+            post_model = PostModel(title=title,content=content,board = board,author=g.user)
+            db.session.add(post_model)
+            db.session.commit()
+            return restful.ok(data={"id":post_model.id})
+        else:
+            return restful.params_error(message=form.messages[0])
 
 
 @bp.get("/email/captcha")  #直接get模式
@@ -202,3 +217,37 @@ def upload_post_image():
                     "errno": 1,
                     "message": message
                 })
+
+
+@bp.get("/post/detail/<post_id>")
+def post_detail(post_id):
+    try:
+        post_model = PostModel.query.get(post_id)
+    except:
+        return "404"
+    comment_count = CommentModel.query.filter_by(post_id=post_id).count()
+    context = {
+        "post":post_model,
+        "comment_count":comment_count
+    }
+    return render_template("front/post_detail.html",**context)
+
+
+@bp.post("/comment")
+@login_required
+def public_comment():
+    form = PublicCommentForm(request.form)
+    if form.validate():
+        content = form.content.data
+        post_id = form.post_id.data
+        try:
+            post_model = PostModel.query.get(post_id)
+        except Exception as e:
+            return restful.params_error(message="贴子不存在！")
+        comment = CommentModel(content=content,post_id=post_id,author_id=g.user.id)
+        db.session.add(comment)
+        db.session.commit()
+        return restful.ok()
+    else:
+        message = form.messages[0]
+        return restful.params_error(message=message)
