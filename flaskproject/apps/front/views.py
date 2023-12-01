@@ -12,6 +12,8 @@ from flask import (Blueprint,
 import string
 import random
 from flask_mail import Message
+from flask_paginate import get_page_parameter, Pagination
+
 from exts import mail,cache
 from utils import restful
 from utils.captcha import Captcha
@@ -44,8 +46,31 @@ def front_context_processor():
 
 @bp.route('/')
 def index():
-    posts = PostModel.query.order_by(PostModel.create_time.desc()).all()
-    return render_template('front/index.html',posts = posts)
+    # posts = PostModel.query.order_by(PostModel.create_time.desc()).all()
+    post_query = PostModel.query.order_by(PostModel.create_time.desc())
+    total = post_query.count()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = request.args.get("per_page", type=int, default=current_app.config['PER_PAGE_COUNT'])
+    print(page)
+    start = (page-1)*current_app.config['PER_PAGE_COUNT']
+    end = start+current_app.config['PER_PAGE_COUNT']
+    posts = post_query.slice(start, end)
+    pagination = Pagination(bs_version=3, page=page, link_size='sm',
+                            prev_label='上一页',next_label='下一页',
+                            per_page=per_page, total=total)
+    # pagination = Pagination(page=page, per_page=per_page, total=total,
+    #                         search=False, record_name='items',
+    #                         css_framework='bootstrap4',
+    #                         link_size='sm',
+    #                         show_single_page=False,
+    #                         page_parameter='page',
+    #                         per_page_parameter='per_page')
+    # boards = BoardModel.query.order_by(BoardModel.create_time.desc()).all()
+    context = {
+        "posts": posts,
+        "pagination": pagination
+    }
+    return render_template('front/index.html', **context)
 
 
 @bp.route('/post/public/',methods=['GET','POST'])

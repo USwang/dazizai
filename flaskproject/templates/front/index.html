@@ -47,7 +47,11 @@
               </li>
               {% endfor %}
           </ul>
+     <div style="text-align: center">
+         {{ pagination.links }}
      </div>
+     </div>
+
 <h1 style="text-align:center;padding: 20px;">发布帖子</h1>
     <form action="" method="post">
       <div class="form-group">
@@ -61,7 +65,7 @@
           <span class="input-group-addon">板块</span>
           <select name="board_id" class="form-control">
             <option value="1">公开/public</option>
-            <option value="1">私有/private</option>
+            <option value="2">私有/private</option>
           </select>
         </div>
       </div>

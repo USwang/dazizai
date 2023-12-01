@@ -43,3 +43,6 @@ AVATARS_SAVE_PATH = os.path.join(BASE_DIR,"media","avatars")
 
 #帖子图片路径
 POST_IMAGE_SAVE_PATH = os.path.join(BASE_DIR,"media","post")
+
+#分页书
+PER_PAGE_COUNT = 10

@@ -15,7 +15,7 @@ def init_boards():
 def create_test_posts():
     boards = list(BoardModel.query.all())
     board_count = len(boards)
-    for x in range(9):
+    for x in range(60):
         title = "我是标题%d"%x
         content = "我是内容%d"%x
         author = UserModel.query.first()
