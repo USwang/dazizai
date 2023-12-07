@@ -24,9 +24,21 @@
 {% block body %}
      <div class="post-group">
           <ul class="post-group-head">
-              <li class="active"><a href="#">最新</a></li>
-              <li><a href="#">点赞最多</a></li>
-              <li><a href="#">评论最多</a></li>
+              {% if st ==1 %}
+                <li class="active">
+              {% else %}
+                <li>
+              {% endif %}
+                 <a href="{{url_for("apps.index",st=1)}}">最新</a>
+                </li>
+{#              <li><a href="{{ url_for("apps.index",st=2) }}">点赞最多</a></li>#}
+              {% if st ==3%}
+                <li class="active">
+              {% else %}
+                <li>
+              {% endif %}
+                 <a href="{{url_for("apps.index",st=3)}}">评论最多</a>
+                </li>
           </ul>
           <ul class="post-list-group">
               {% for post in posts %}

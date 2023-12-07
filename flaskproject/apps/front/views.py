@@ -11,6 +11,8 @@ from flask import (Blueprint,
                    g, url_for)
 import string
 import random
+
+from flask_jwt_extended import create_access_token
 from flask_mail import Message
 from flask_paginate import get_page_parameter, Pagination
 
@@ -26,6 +28,7 @@ from models import UserModel, Stockdatabase, PostModel, BoardModel, CommentModel
 from exts import db
 from .decorators import login_required
 from flask_avatars import Identicon
+from sqlalchemy.sql import func
 
 bp = Blueprint("apps", __name__, url_prefix='/')
 
@@ -46,12 +49,19 @@ def front_context_processor():
 
 @bp.route('/')
 def index():
+    sort = request.args.get("st",type=int,default=1)
     # posts = PostModel.query.order_by(PostModel.create_time.desc()).all()
-    post_query = PostModel.query.order_by(PostModel.create_time.desc())
+    post_query = None
+    if sort == 1:
+        post_query = PostModel.query.order_by(PostModel.create_time.desc())
+    else:
+        post_query = db.session.query(PostModel).outerjoin(CommentModel).group_by(
+            PostModel.id).order_by(func.count(CommentModel.id).desc(),PostModel.create_time.desc())
+
     total = post_query.count()
     page = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = request.args.get("per_page", type=int, default=current_app.config['PER_PAGE_COUNT'])
-    print(page)
+    # print(page)
     start = (page-1)*current_app.config['PER_PAGE_COUNT']
     end = start+current_app.config['PER_PAGE_COUNT']
     posts = post_query.slice(start, end)
@@ -68,7 +78,8 @@ def index():
     # boards = BoardModel.query.order_by(BoardModel.create_time.desc()).all()
     context = {
         "posts": posts,
-        "pagination": pagination
+        "pagination": pagination,
+        "st": sort
     }
     return render_template('front/index.html', **context)
 
@@ -145,10 +156,14 @@ def login():
             if not user.check_password(password):
                 return restful.params_error("邮箱或密码错误！")
             session['user_id'] = user.id
+            #如果是员工，才生成token
+            token = ""
+            if user.is_internal_employee:
+                token = create_access_token(identity=user.id)
             if remember==1:
                 # 默认浏览器关闭则过期
                 session.permanent = True
-            return restful.ok()
+            return restful.ok(data={"token": token, "user": user.to_dict()})
         else:
             return restful.params_error(message=form.messages[0])
 

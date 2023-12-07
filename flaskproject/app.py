@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import config
-from exts import db, mail, cache, csrf, avatars
+from exts import db, mail, cache, csrf, avatars, jwt
 from models import Stockdatabase
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
@@ -8,6 +8,7 @@ from eastmoneystocklistget import getjson_stocklist, pageNumber
 from eastmoneyincomedataget import getjson_stockincome
 from apps.front import front_bp
 from apps.media import media_bp
+from apps.cmsapi import cmsapi_bp
 from bbs_celery import make_celery
 import commands
 
@@ -20,14 +21,18 @@ csrf.init_app(app)
 migrate = Migrate(app, db)
 mycelery = make_celery(app)
 avatars.init_app(app)
+jwt.init_app(app)
 
 #注册蓝图
 app.register_blueprint(front_bp)
 app.register_blueprint(media_bp)
+app.register_blueprint(cmsapi_bp)
 
 #注册命令
 app.cli.command("create_test_posts")(commands.create_test_posts)
 app.cli.command("init_boards")(commands.init_boards)
+app.cli.command("add_employee")(commands.add_employee)
+
 @app.route('/update/stockprice/',methods=['GET','POST'])
 def update_stockprice():
     if request.method == 'GET':

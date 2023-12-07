@@ -25,3 +25,11 @@ def create_test_posts():
         db.session.add(post_model)
     db.session.commit()
     print("测试帖子添加成功")
+
+
+def add_employee():
+    name = input("请输入要添加的用户名：")
+    user = UserModel.query.filter_by(username=name).first()
+    user.is_internal_employee = 1
+    db.session.commit()
+    print("add employee")
