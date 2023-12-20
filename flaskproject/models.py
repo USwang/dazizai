@@ -6,8 +6,8 @@ from sqlalchemy_serializer import SerializerMixin
 
 
 class UserModel(db.Model,SerializerMixin):
-    serialize_rules = ("-_password",)
-    # serialize_only = ("id","email","mobile_number","signature","avatar","registration_date","is_internal_employee","is_active")
+    # serialize_rules = ("-_password",)
+    serialize_only = ("id","email","mobile_number","signature","avatar","registration_date","is_internal_employee","is_active")
     __tablename__ = 'user'
     id = db.Column(db.String(100),primary_key=True, default=shortuuid.uuid)
     email = db.Column(db.String(120), unique=True, nullable=True)
@@ -39,7 +39,8 @@ class UserModel(db.Model,SerializerMixin):
 
 
 #隐私设置
-class BoardModel(db.Model):
+class BoardModel(db.Model,SerializerMixin):
+    serialize_only = ('id','name','priority','create_time')
     __tablename__ = "board"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20), default="公开/public")
@@ -47,7 +48,7 @@ class BoardModel(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.now)
 
 
-class PostModel(db.Model):
+class PostModel(db.Model, SerializerMixin):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)

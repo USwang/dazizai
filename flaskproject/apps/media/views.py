@@ -15,3 +15,8 @@ def get_avatar(filename):
 @bp.route("/post/<filename>")
 def get_post_image(filename):
     return send_from_directory(current_app.config['POST_IMAGE_SAVE_PATH'], filename)
+
+
+@bp.route("/banner/<filename>")
+def get_banner_image(filename):
+    return send_from_directory(current_app.config['BANNER_IMAGE_SAVE_PATH'], filename)

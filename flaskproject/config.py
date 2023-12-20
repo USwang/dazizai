@@ -44,5 +44,12 @@ AVATARS_SAVE_PATH = os.path.join(BASE_DIR,"media","avatars")
 #帖子图片路径
 POST_IMAGE_SAVE_PATH = os.path.join(BASE_DIR,"media","post")
 
+#轮播图图片路径
+BANNER_IMAGE_SAVE_PATH = os.path.join(BASE_DIR,"media","banner")
+
 #分页
 PER_PAGE_COUNT = 10
+
+#设置JWT过期时间
+
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=100)

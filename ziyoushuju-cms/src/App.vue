@@ -78,6 +78,11 @@ export default {
     Postcard,
     Comment,
     User
+  },
+  mounted(){
+    if(!this.$auth.is_internal_employee){
+      window.location = "http://127.0.0.1:5000";
+    }
   }
 };
 </script>

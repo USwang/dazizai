@@ -6,8 +6,12 @@
 
 <script>
 export default {
-    name:"Post" 
-
+    name:"Post" ,
+    mounted(){
+        this.$http.getPostList(1).then(res =>{
+            console.log(res);
+        })
+    }
 }
 </script>
 
