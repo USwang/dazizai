@@ -84,6 +84,10 @@ def index():
     return render_template('front/index.html', **context)
 
 
+@bp.get('/cms')
+def cms():
+    return render_template('cms/index.html')
+
 @bp.route('/post/public/',methods=['GET','POST'])
 @login_required
 def public_post():

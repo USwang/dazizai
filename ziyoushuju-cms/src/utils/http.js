@@ -3,10 +3,10 @@ import auth from "./auth"
 import qs from "qs";
 
 // http://www.zlkt.net
-// const SERVER_HOST = "http://127.0.0.1:5000"
+//const SERVER_HOST = "http://127.0.0.1:5000"
 // window.location.origin
 
-// const SERVER_HOST = window.location.origin;
+const SERVER_HOST = window.location.origin;
 
 // const SERVER_HOST = process.env.VUE_APP_SERVER_HOST
 
@@ -36,11 +36,11 @@ class Http {
 		if(process.env.NODE_ENV == 'production'){
 			this.server_host = window.location.origin;
 		}else{
-			this.server_host = "http://127.0.0.1:5000"
+			this.server_host = SERVER_HOST
 		}
 		this.http = axios.create({
 			baseURL: this.server_host + "/cmsapi",
-			timeout: 1000*50
+			timeout: 1000*60
 		});
 
 		// 请求之前的拦截器，用来设置JWT

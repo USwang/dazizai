@@ -7,7 +7,7 @@ from sqlalchemy_serializer import SerializerMixin
 
 class UserModel(db.Model,SerializerMixin):
     # serialize_rules = ("-_password",)
-    serialize_only = ("id","email","mobile_number","signature","avatar","registration_date","is_internal_employee","is_active")
+    serialize_only = ("id","email","mobile_number","signature","avatar","registration_date","is_internal_employee", "is_active",'username')
     __tablename__ = 'user'
     id = db.Column(db.String(100),primary_key=True, default=shortuuid.uuid)
     email = db.Column(db.String(120), unique=True, nullable=True)
@@ -49,6 +49,7 @@ class BoardModel(db.Model,SerializerMixin):
 
 
 class PostModel(db.Model, SerializerMixin):
+    serialize_only = ('id', 'title', 'create_time', 'author', 'content', 'board')
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
@@ -61,7 +62,7 @@ class PostModel(db.Model, SerializerMixin):
     board = db.relationship("BoardModel",backref=db.backref("posts"))
 
 
-class CommentModel(db.Model):
+class CommentModel(db.Model,SerializerMixin):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)

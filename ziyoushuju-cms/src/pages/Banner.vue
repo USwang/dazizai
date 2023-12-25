@@ -91,7 +91,7 @@
 import { Plus, Edit, Delete } from "@element-plus/icons";
 import {ElMessage} from "element-plus";
 export default {
-  name: "Banner",
+  name: "mBanner",
   components: {
     Plus,
     Edit,
