@@ -21,10 +21,10 @@ DB_URI = "mysql+pymysql://{username}:{password}@{host}:{port}/{db}?charset=utf8"
                                                                                         db=DATABASE)
 SQLALCHEMY_DATABASE_URI = DB_URI
 
-MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
+# MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
 MAIL_SERVER = "smtp.163.com"
 MAIL_USE_SSL = True
-# MAIL_PORT = 465
+MAIL_PORT = 465
 MAIL_USERNAME = "wangshiyu217@163.com"
 MAIL_PASSWORD = "LANTMMHYHCGAWNSE" #not true
 MAIL_DEFAULT_SENDER = "wangshiyu217@163.com"
