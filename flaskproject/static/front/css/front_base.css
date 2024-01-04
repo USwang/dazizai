@@ -6,6 +6,17 @@ a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, bo
     list-style: none;
 }
 
+.navbar-default .navbar-brand {
+    font-family: Arial, sans-serif;
+    /*font-style: italic;*/
+    font-size: 14px;
+    color: black;
+}
+/*.navbar-default {*/
+/*    background-color: #f8f8f8;*/
+/*    border-color: #e7e7e7;*/
+/*    padding-left: 0;*/
+/*}*/
 .main-container{
     width: 990px;
     margin: 0 auto;
@@ -21,3 +32,7 @@ a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, bo
     width: 250px;
     float: right;
 }
+
+/*div.container{*/
+/*    padding-left: 5px;*/
+/*}*/

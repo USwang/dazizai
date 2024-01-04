@@ -1,5 +1,5 @@
+import json
 import os.path
-
 from flask import (Blueprint,
                    request,
                    render_template,
@@ -76,10 +76,26 @@ def index():
     #                         page_parameter='page',
     #                         per_page_parameter='per_page')
     # boards = BoardModel.query.order_by(BoardModel.create_time.desc()).all()
+
+    # 获取第一支股票数据作为首页默认图标数据
+    # price_json_data = json.loads(Stockdatabase.query.get(1).PRICE_datajson)
+    # default_code = price_json_data['data']['code']   #股票代码
+    # default_name = price_json_data['data']['name']   #股票名称
+    # default_klines =price_json_data['data']['klines']
+    # default_klines_time = []
+    # default_klines_price =[]
+    # for default_kline in default_klines:
+    #     default_kline_split = default_kline.split(",")
+    #     default_klines_time.append(default_kline_split[0])
+    #     default_klines_price.append(default_kline_split[2])
     context = {
         "posts": posts,
         "pagination": pagination,
-        "st": sort
+        "st": sort,
+        # "default_code": default_code,
+        # "default_name": default_name,
+        # "default_klines_time": default_klines_time,
+        # "default_klines_price": default_klines_price,
     }
     return render_template('front/index.html', **context)
 
@@ -288,10 +304,77 @@ def public_comment():
             post_model = PostModel.query.get(post_id)
         except Exception as e:
             return restful.params_error(message="贴子不存在！")
-        comment = CommentModel(content=content,post_id=post_id,author_id=g.user.id)
+        comment = CommentModel(content=content, post_id=post_id, author_id=g.user.id)
         db.session.add(comment)
         db.session.commit()
         return restful.ok()
     else:
         message = form.messages[0]
         return restful.params_error(message=message)
+
+@bp.get("/update_chart")
+def update_chart():
+    #尚未完成
+    price_json_data = json.loads(Stockdatabase.query.get().PRICE_datajson)
+    default_code = price_json_data['data']['code']   #股票代码
+    default_name = price_json_data['data']['name']   #股票名称
+    default_klines =price_json_data['data']['klines']
+    default_klines_time = []
+    default_klines_price =[]
+    for default_kline in default_klines:
+        default_kline_split = default_kline.split(",")
+        default_klines_time.append(default_kline_split[0])
+        default_klines_price.append(default_kline_split[2])
+
+    data = {
+        "default_klines_time": default_klines_time,
+        "default_klines_price": default_klines_price,
+        "default_code": default_code,
+        "default_name": default_name
+    }
+    return jsonify(data)
+
+@bp.get("/default_chart")
+def default_chart():
+    #获取日线数据
+    stock_data = Stockdatabase.query.get(1)
+    price_json_data = json.loads(stock_data.PRICE_datajson)
+    default_code = price_json_data['data']['code']   #股票代码
+    default_name = price_json_data['data']['name']   #股票名称
+    default_klines =price_json_data['data']['klines']
+    default_klines_time = []
+    default_klines_price =[]
+    for default_kline in default_klines:
+        default_kline_split = default_kline.split(",")
+        default_klines_time.append(default_kline_split[0])
+        default_klines_price.append(default_kline_split[2])
+    #获取经营数据
+    report_date = []
+    #扣非净利润
+    DEDUCT_PARENT_NETPROFIT =[]
+    #营业收入
+    OPERATE_INCOME= []
+    #营业利润
+    OPERATE_PROFIT=[]
+    income_json_datas = stock_data.INCOME_datajson
+    for income_json_data in income_json_datas:
+        if income_json_data:
+            report_date.append(income_json_data['REPORT_DATE'][0:10])
+            DEDUCT_PARENT_NETPROFIT.append(income_json_data['DEDUCT_PARENT_NETPROFIT'])
+            print(income_json_data['DEDUCT_PARENT_NETPROFIT'])
+            if income_json_data['DEDUCT_PARENT_NETPROFIT']:
+               print(type(income_json_data['DEDUCT_PARENT_NETPROFIT']/1000000.0))
+            OPERATE_INCOME.append(income_json_data['OPERATE_INCOME'])
+            OPERATE_PROFIT.append(income_json_data['OPERATE_PROFIT'])
+    # print(report_date,DEDUCT_PARENT_NETPROFIT)
+    data = {
+        "default_klines_time": default_klines_time,
+        "default_klines_price": default_klines_price,
+        "default_code": default_code,
+        "default_name": default_name,
+        "report_date":report_date,
+        "DEDUCT_PARENT_NETPROFIT":DEDUCT_PARENT_NETPROFIT,
+        "OPERATE_INCOME":OPERATE_INCOME,
+        "OPERATE_PROFIT":OPERATE_PROFIT,
+    }
+    return jsonify(data)

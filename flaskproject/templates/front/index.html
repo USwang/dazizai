@@ -1,29 +1,43 @@
 {% extends "front/base.html" %}
 
 {% block title %}
-首页-自游数据
+韭菜根儿--价值投资
 {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static',filename='front/css/index.css') }}">
 {#<script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>#}
-<script src="{{ url_for('static',filename='lib/wangEditor/wangEditor.min.js') }}"></script>
-<script src="{{ url_for('static',filename='front/js/public_post.js') }}"></script>
-<link rel="stylesheet" href="{{ url_for('static',filename='lib/wangEditor/wangEditor.css') }}">
+
+{#<script src="{{ url_for('static',filename='lib/wangEditor/wangEditor.min.js') }}"></script>#}
+{#<script src="{{ url_for('static',filename='front/js/public_post.js') }}"></script>#}
+<script src="{{ url_for('static',filename='front/js/stockdata_echart.js') }}"></script>
+{#<link rel="stylesheet" href="{{ url_for('static',filename='lib/wangEditor/wangEditor.css') }}">#}
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='front/css/index.css') }}">
 {#<link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">#}
-<style>
-  #editor—wrapper {
-    border: 1px solid #ccc;
-    z-index: 60; /* 按需定义 */
-  }
-  #toolbar-container { border-bottom: 1px solid #ccc; }
-  #editor-container { height: 500px; }
-</style>
+{#<style>#}
+{#  #editor—wrapper {#}
+{#    border: 1px solid #ccc;#}
+{#    z-index: 60; /* 按需定义 */#}
+{#  }#}
+{#  #toolbar-container { border-bottom: 1px solid #ccc; }#}
+{#  #editor-container { height: 500px; }#}
+{#</style>#}
 {% endblock %}
 
 {% block body %}
-     <div class="post-group">
-          <ul class="post-group-head">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-11 col-lg-7"
+                 id="lineChartContainer"
+                 style="background-color: rgba(218,218,218,0.47);width: 600px;height:500px;">
+                <p>{{ default_code }}</p>
+                <p>{{ default_name }}</p>
+            </div>
+            <div class="col-sm-0 col-md-1 col-lg-5"
+                style="background-color: rgba(155,125,49,0.1);
+                box-shadow: inset 1px -1px 1px #444,
+                inset -1px 1px 1px #444;">
+                <ul class="post-group-head">
               {% if st ==1 %}
                 <li class="active">
               {% else %}
@@ -40,7 +54,7 @@
                  <a href="{{url_for("apps.index",st=3)}}">评论最多</a>
                 </li>
           </ul>
-          <ul class="post-list-group">
+                <ul class="post-list-group">
               {% for post in posts %}
               <li>
                 <div class="author-avatar-group">
@@ -59,36 +73,47 @@
               </li>
               {% endfor %}
           </ul>
-     <div style="text-align: center">
-         {{ pagination.links }}
-     </div>
-     </div>
+                <div style="text-align: center">
+                {{ pagination.links }}
+                </div>
+            </div>
 
-<h1 style="text-align:center;padding: 20px;">发布帖子</h1>
-    <form action="" method="post">
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon">标题</span>
-          <input type="text" class="form-control" name="title">
+{#            <div class="col-sm-0 col-md-0 col-lg-4"#}
+{#                style="background-color: #dedef8;#}
+{#                box-shadow: inset 1px -1px 1px #444,#}
+{#                inset -1px 1px 1px #444;">#}
+{##}
+{#                <h1 style="text-align:center;padding: 20px;">发布帖子</h1>#}
+{#                <form action="" method="post">#}
+{#      <div class="form-group">#}
+{#        <div class="input-group">#}
+{#          <span class="input-group-addon">标题</span>#}
+{#          <input type="text" class="form-control" name="title">#}
+{#        </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <div class="input-group">#}
+{#          <span class="input-group-addon">板块</span>#}
+{#          <select name="board_id" class="form-control">#}
+{#            <option value="1">公开/public</option>#}
+{#            <option value="2">私有/private</option>#}
+{#          </select>#}
+{#        </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <div id="editor—wrapper">#}
+{#        <div id="toolbar-container"></div>#}
+{#        <div id="editor-container"></div>#}
+{#      </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <button class="btn btn-danger" id="submit-btn">发布帖子</button>#}
+{#      </div>#}
+{#    </form>#}
+{#             </div>#}
         </div>
-      </div>
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon">板块</span>
-          <select name="board_id" class="form-control">
-            <option value="1">公开/public</option>
-            <option value="2">私有/private</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <div id="editor—wrapper">
-        <div id="toolbar-container"></div>
-        <div id="editor-container"></div>
-      </div>
-      </div>
-      <div class="form-group">
-        <button class="btn btn-danger" id="submit-btn">发布帖子</button>
-      </div>
-    </form>
+    </div>
+
+
+
 {% endblock body %}
