@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 import config
 from exts import db, mail, cache, csrf, avatars, jwt, cors
-from models import Stockdatabase
+from models import Stockdatabase,Stockdataprocess
 from flask_migrate import Migrate
 from eastmoneystockdataget import getjson_stockdata
 from eastmoneystocklistget import getjson_stocklist, pageNumber
-from eastmoneyincomedataget import getjson_stockincome
+from eastmoneyincomedataget import getjson_stockincome, dataprocess
 from apps.front import front_bp
 from apps.media import media_bp
 from apps.cmsapi import cmsapi_bp
@@ -116,7 +116,7 @@ def update_stockincome():
                 for li in lies:
                     SECURITY_CODE = li.SECURITY_CODE
                     SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
-                    #判断是否存在
+                    #判断是否存在,存在就更新，不存在就添加
                     da = db.session.query(Stockdatabase).filter_by(SECURITY_CODE=SECURITY_CODE).first()
                     income = getjson_stockincome(SECURITY_CODE)
                     if da:
@@ -133,6 +133,44 @@ def update_stockincome():
 
     return 'update finished'
 
+
+@app.route('/update/stockdataprocess/',methods=['GET', 'POST'])
+def process_stockdata():
+    if request.method == 'GET':
+        return render_template('stockdataprocess.html')
+    else:
+        # 验证密码
+        username = request.form.get('username')
+        password = request.form.get('password')
+        # 更新数据库
+        if username == 'wsy' and password == 'mtjb1..':
+            lies = db.session.query(Stockdatabase).all() #获取stock列表
+            if lies:
+                for li in lies:
+                    SECURITY_CODE = li.SECURITY_CODE
+                    SECURITY_NAME_ABBR = li.SECURITY_NAME_ABBR
+                    INCOME_datajson = li.INCOME_datajson
+                    PRICE_datajson = li.PRICE_datajson
+                    if INCOME_datajson:
+                        incomeprocess, priceprocess = dataprocess(INCOME_datajson,PRICE_datajson)
+                    else:
+                        break
+                    da = db.session.query(Stockdataprocess).filter_by(SECURITY_CODE=SECURITY_CODE).first()
+                    if da:
+                        da.INCOME_dataprocess = incomeprocess
+                        da.PRICE_dataprocess = priceprocess
+                        db.session.commit()
+                    else:
+                        stockdataprocess = Stockdataprocess(SECURITY_CODE=SECURITY_CODE,SECURITY_NAME_ABBR= SECURITY_NAME_ABBR,
+                                                            INCOME_dataprocess = incomeprocess,PRICE_dataprocess = priceprocess)
+                        db.session.add(stockdataprocess)
+                        db.session.commit()
+            else:
+                return "请先更新列表"
+        else:
+            return '用户名或密码不正确'
+
+    return 'update finished'
 
 
 if __name__ == '__main__':

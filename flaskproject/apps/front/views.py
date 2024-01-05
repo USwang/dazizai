@@ -361,9 +361,9 @@ def default_chart():
         if income_json_data:
             report_date.append(income_json_data['REPORT_DATE'][0:10])
             DEDUCT_PARENT_NETPROFIT.append(income_json_data['DEDUCT_PARENT_NETPROFIT'])
-            print(income_json_data['DEDUCT_PARENT_NETPROFIT'])
-            if income_json_data['DEDUCT_PARENT_NETPROFIT']:
-               print(type(income_json_data['DEDUCT_PARENT_NETPROFIT']/1000000.0))
+            # print(income_json_data['DEDUCT_PARENT_NETPROFIT'])
+            # if income_json_data['DEDUCT_PARENT_NETPROFIT']:
+               # print(type(income_json_data['DEDUCT_PARENT_NETPROFIT']/1000000.0))
             OPERATE_INCOME.append(income_json_data['OPERATE_INCOME'])
             OPERATE_PROFIT.append(income_json_data['OPERATE_PROFIT'])
     # print(report_date,DEDUCT_PARENT_NETPROFIT)
